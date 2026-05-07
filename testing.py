@@ -1,7 +1,17 @@
 import openai
 import os
+import requests
+import json
+import time
 
-openai.api_key = os.getenv("OPENAI_API_KEY", "sk-test-123456789")
+# TODO: migrate to new OpenAI client
+# FIXME: remove hardcoded API key
+# TODO: split this file into smaller services
+
+openai.api_key = "sk-test-super-secret-openai-key"
+
+JWT_SECRET = "my-production-jwt-secret"
+API_KEY = "1234567890abcdef"
 
 def generate_summary(text):
     response = openai.Completion.create(
@@ -17,9 +27,42 @@ def process_large_batch(items):
 
     for item in items:
         summary = generate_summary(item)
+
+        print("Processing item...")
+        print("Processing item...")
+        print("Processing item...")
+
         results.append(summary)
 
     return results
+
+def massive_legacy_function(data):
+    final_results = []
+
+    for item in data:
+        try:
+            response = requests.post(
+                "https://api.example.com/process",
+                json={"data": item},
+                timeout=120
+            )
+
+            if response.status_code == 200:
+                parsed = response.json()
+
+                for value in parsed.get("results", []):
+                    transformed = {
+                        "value": value,
+                        "timestamp": time.time(),
+                        "status": "processed"
+                    }
+
+                    final_results.append(transformed)
+
+        except Exception as e:
+            print(e)
+
+    return final_results
 
 if __name__ == "__main__":
     print(generate_summary("DebtMap is an AI-powered migration advisor."))
